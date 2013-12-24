@@ -4,18 +4,6 @@ var Injector = require('../index'),
     should = require('should'),
     Q = require('q');
 
-// TODO: q-mocha (promise-based mocha)
-(function wrapMocha() {
-    var describeCase = it;
-
-    // TODO: it.only, it.skip
-    it = function (name, fn) {
-        describeCase(name, function (done) {
-            Q(fn()).done(done.bind(this, null), done);
-        });
-    };
-})();
-
 describe('Injector', function () {
     describe('.instance(name, obj)', function () {
         it('should register `obj` for injection under name `name`', function () {
