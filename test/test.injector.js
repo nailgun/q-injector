@@ -117,28 +117,6 @@ describe('Injector', function () {
             });
         });
 
-        it('should be used to invoke factory functions', function () {
-            var app = new Injector(),
-                factory = function () {
-                    return {name: 'service1'};
-                },
-                used = false;
-
-            // mock
-            var invoke = app.invoke;
-            app.invoke = function (fn) {
-                if (fn === factory) {
-                    used = true;
-                }
-                return invoke.apply(app, arguments);
-            };
-
-            app.factory('service1', factory);
-            return app.invoke(function (service1) {
-                used.should.be.true;
-            });
-        });
-
         it('should drop surrounding _underscores_ from injection name', function (done) {
             var app = new Injector();
             app.instance('service1', {name: 'service1'});
@@ -147,6 +125,46 @@ describe('Injector', function () {
             return app.invoke(function (_service1_, _service2_) {
                 _service1_.name.should.equal('service1');
                 _service2_.name.should.equal('service2');
+            });
+        });
+    });
+
+    it('should use `invoke` for factory functions', function () {
+        var app = new Injector(),
+            factory = function () {
+                return {name: 'service1'};
+            },
+            used = false;
+
+        // mock
+        var invoke = app.invoke;
+        app.invoke = function (fn) {
+            if (fn === factory) {
+                used = true;
+            }
+            return invoke.apply(app, arguments);
+        };
+
+        app.factory('service1', factory);
+        return app.invoke(function (service1) {
+            used.should.be.true;
+        });
+    });
+
+    it('should not construct injections until requested', function () {
+        var app = new Injector(),
+            initialized = false;
+
+        app.factory('service1', function () {
+            initialized = true;
+            return {name: 'service1'};
+        });
+
+        return app.invoke(function () {
+            initialized.should.be.false;
+
+            return app.invoke(function (service1) {
+                initialized.should.be.true;
             });
         });
     });
