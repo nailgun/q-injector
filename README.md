@@ -23,7 +23,7 @@ supporting asynchronous service initialization with
 
 ```js
 var Injector = require('q-injector'),
-    app = new Injector(); // create application based on injector
+    app = new Injector(); // create application based on the Injector
 
 // register object instance as service1
 app.instance('service1', {
@@ -32,7 +32,7 @@ app.instance('service1', {
 });
 
 // register factory method for service2
-app.instance('service2', function (service3) { // inject service3 into factory method
+app.instance('service2', function (service3) { // inject service3 into the factory method
     return { /* ... */ };
 });
 
@@ -40,19 +40,19 @@ app.instance('service2', function (service3) { // inject service3 into factory m
 app.instance('service3', function () {
     // ...
     return thenable; // returns promise, that will be resolved
-                     // during injection of service3 to service2
+                     // during injection of service3 into service2
 });
 
 // initiates dependency resolution and service initialization
 app.invoke(function (service1, service2) {
     // at this point all services are resolved,
-    // service3 is injected to service2 factory method
+    // service3 is injected into service2 factory method
 
     service1.method1();
     // ...
 });
 
-// another method to get an instance of service
+// another method to get an instance of a service
 app.get('service1').then(function (service1) {
     service1.method1();
     // ...
@@ -68,18 +68,21 @@ Register an instance `obj` for further injection under name `name`.
 ### injector.factory(name, factory, [locals])
 
 Register a factory method `factory` which will be used to construct an instance
-for futher injection under name `name`. Factory method `factory` won't be
-invoked until `name` will be requested during injection. `factory` will be
-invoked using `injector.invoke()` method, which means that factory method also
-can have dependencies as well, as ordinary function executed using `invoke()`.
+for further injection under name `name`. Factory method `factory` won't be
+invoked until `name` is requested during injection. `factory` will be invoked
+using `injector.invoke()` method, which means that factory method may have
+dependencies as well, as ordinary function executed using `invoke()`.
 
 To put it altogether, one factory can depend on others, others can depend on
 another others, etc. By calling `injector.factory()` you define *dependency
 graph* which will be resolved during injection, when you call
 `injector.invoke()` or `injector.get()`.
 
-Futhermore, `factory` may return a promise and it will be resolved before
-injection to another function.
+Factory method is called only once and it's return value is cached in the
+injector.
+
+Futhermore, `factory` may return a promise and it will be resolved before being
+injected to another function.
 
 Optional `locals` is a map of instances injected into factory method.
 
@@ -92,13 +95,13 @@ app.factory('service1', function (service2, service3) {
 });
 ```
 
-In this example, `service2` passed to factory method will be string 's2',
-but `service3` will be previously registered injection named 'service3'.
+In this example, `service2` passed to the factory method will be string `'s2'`,
+but `service3` will be previously registered injection named `'service3'`.
 
 ### injector.get(name)
 
-Construct (if it isn't constructed yet) and return promise resolved to an
-instance of `name`, previously registered using `injector.instance()` or
+Construct (if it is not constructed yet) and return promise resolved to an
+instance of `name`, previously registered by `injector.instance()` or
 `injector.factory()`.
 
 For example:
@@ -130,8 +133,8 @@ app.invoke(function (service1, service2) {
 });
 ```
 
-In this example, `service2` passed to `fn` will be string 's2', but `service3`
-will be previously registered injection named 'service3'.
+In this example, `service2` passed to `fn` will be string `'s2'`, but `service3`
+will be previously registered injection named `'service3'`.
 
 ## Tests
 
