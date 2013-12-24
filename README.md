@@ -66,18 +66,23 @@ app.get('service1').then(function (service1) {
 
 ### Dependency
 
-Dependency is an object which is used by other objects. A dependency also have
-a name, which is used by other objects to refer to the dependency.
+Dependency is an object used by other objects. A dependency have a name, used
+by other objects to refer to the dependency.
 
-In terms of JavaScript dependency can be a function, an object, a number,
+In terms of JavaScript, dependency can be a function, an object, a number,
 anything.
+
+### Factory method
+
+A JavaScript function, used to construct a dependency object. It can be
+asynchronous, returning a promise.
 
 ### Dependency injection
 
 Dependency injection is a process of dependency resolution. Objects get links
 to their dependencies declared by names.
 
-An Injector instance has single namespace for dependencies. Dependency named
+An Injector instance has a single namespace for dependencies. Dependency named
 `service1` will be always the same within the Injector instance.
 
 One dependency can depend on other, others can depend on another, etc. By
@@ -94,20 +99,19 @@ Register an object `obj` as dependency named `name`.
 
 ### injector.factory(name, factory, [locals])
 
-Register a factory method `factory` which will be used to construct an
+Register a factory method `factory` which will be used to construct a
 dependency named `name`. Factory method `factory` won't be invoked until
-injection of dependency `name` to another object. `factory` will be invoked
-using `injector.invoke()` method, which means that factory method may have
-dependencies as well.
+dependency `name` is requested to be injected into another object. `factory`
+will be invoked using `injector.invoke()` method, which means that factory
+method may have dependencies as well.
 
 Factory method is called only once and its return value is cached in the
 Injector instance.
 
 `factory` may return a plain object or a promise, which will be resolved before
-being injected to another object.
+being injected into another object.
 
-Optional `locals` is a override of dependencies injected into the factory
-method.
+Optional `locals` is an override of dependencies injected into the `factory`.
 
 For example:
 ```js
@@ -121,7 +125,7 @@ app.factory('service1', function (service2, service3) {
 
 ### injector.get(name)
 
-Resolve previously registered dependency by `name` and return promise.
+Resolve previously registered dependency by `name` and return a promise.
 
 For example:
 ```js
@@ -133,11 +137,11 @@ app.get('service1').then(function (s1) {
 ### injector.invoke(fn, [locals])
 
 Parse `fn` function declaration argument names, resolve previously registered
-dependencies by the names and invoke `fn` with the dependecies.
+dependencies by their names and invoke `fn` with the dependecies.
 
 Returns a promise which will be resolved to a return value of `fn`.
 
-Optional `locals` is a override of dependencies injected into `fn`.
+Optional `locals` is an override of dependencies injected into `fn`.
 
 For example:
 ```js
@@ -155,5 +159,5 @@ app.invoke(function (service1, service2) {
 
 ## Tests
 
-If it still isn't clear how q-injector works, take a look at provided
+If it's not still clear how q-injector works, take a look at provided
 [testsuite](test/test.injector.js). There are all possible use cases.
