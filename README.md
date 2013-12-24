@@ -5,7 +5,7 @@
          align="right" alt="Promises/A+ logo" />
 </a>
 
-*Lightweight asynchronous promise-based dependency injector.*
+*Lightweight asynchronous promise-based dependency injector ([60 lines of code](https://github.com/nailgun/q-injector/blob/master/lib/injector.js)).*
 
 [![Build Status](https://travis-ci.org/nailgun/q-injector.png?branch=master)](https://travis-ci.org/nailgun/q-injector)
 [![NPM version](https://badge.fury.io/js/q-injector.png)](http://badge.fury.io/js/q-injector)
