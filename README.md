@@ -12,12 +12,14 @@
 
 ```npm install q-injector```
 
+
 ## About
 
 Dependency injector for Node.js based on [Q](https://github.com/kriskowal/q),
 inspired by [angular.js injector](http://docs.angularjs.org/api/AUTO.$injector),
-supporting asynchronous service initialization with
+supporting asynchronous dependency initialization with
 [Promise/A+ style API](http://promises-aplus.github.com/promises-spec).
+
 
 ## Usage
 
@@ -25,84 +27,101 @@ supporting asynchronous service initialization with
 var Injector = require('q-injector'),
     app = new Injector(); // create application based on the Injector
 
-// register object instance as service1
+// register dependency `service1` within the injector
 app.instance('service1', {
     method1: function () { /* ... */ },
     // ...
 });
 
-// register factory method for service2
-app.instance('service2', function (service3) { // inject service3 into the factory method
+// register a factory method of dependency `service2`
+app.instance('service2', function (service3) { // inject `service3` into the factory method
     return { /* ... */ };
 });
 
-// register asynchronous factory method for service3
+// register an asynchronous factory method for `service3`
 app.instance('service3', function () {
     // ...
     return thenable; // returns promise, that will be resolved
-                     // during injection of service3 into service2
+                     // during injection of `service3` into `service2`
 });
 
-// initiates dependency resolution and service initialization
+// initiates dependency initialization and injects initialized dependencies
 app.invoke(function (service1, service2) {
     // at this point all services are resolved,
-    // service3 is injected into service2 factory method
+    // `service3` is injected into `service2` factory method
 
     service1.method1();
     // ...
 });
 
-// another method to get an instance of a service
+// another method to inject a dependency
 app.get('service1').then(function (service1) {
     service1.method1();
     // ...
 });
 ```
 
+
+## Terms
+
+### Dependency
+
+Dependency is an object which is used by other objects. A dependency also have
+a name, which is used by other objects to refer to the dependency.
+
+In terms of JavaScript dependency can be a function, an object, a number,
+anything.
+
+### Dependency injection
+
+Dependency injection is a process of dependency resolution. Objects get links
+to their dependencies declared by names.
+
+An Injector instance has single namespace for dependencies. Dependency named
+`service1` will be always the same within the Injector instance.
+
+One dependency can depend on other, others can depend on another, etc. By
+calling `injector.factory()` you define *dependency graph* which will be
+resolved during injection, when you call `injector.invoke()` or
+`injector.get()`.
+
+
 ## API
 
 ### injector.instance(name, obj)
 
-Register an instance `obj` for further injection under name `name`.
+Register an object `obj` as dependency named `name`.
 
 ### injector.factory(name, factory, [locals])
 
-Register a factory method `factory` which will be used to construct an instance
-for further injection under name `name`. Factory method `factory` won't be
-invoked until `name` is requested during injection. `factory` will be invoked
+Register a factory method `factory` which will be used to construct an
+dependency named `name`. Factory method `factory` won't be invoked until
+injection of dependency `name` to another object. `factory` will be invoked
 using `injector.invoke()` method, which means that factory method may have
-dependencies as well, as ordinary function executed using `invoke()`.
+dependencies as well.
 
-To put it altogether, one factory can depend on others, others can depend on
-another others, etc. By calling `injector.factory()` you define *dependency
-graph* which will be resolved during injection, when you call
-`injector.invoke()` or `injector.get()`.
+Factory method is called only once and its return value is cached in the
+Injector instance.
 
-Factory method is called only once and it's return value is cached in the
-injector.
+`factory` may return a plain object or a promise, which will be resolved before
+being injected to another object.
 
-Futhermore, `factory` may return a promise and it will be resolved before being
-injected to another function.
-
-Optional `locals` is a map of instances injected into factory method.
+Optional `locals` is a override of dependencies injected into the factory
+method.
 
 For example:
 ```js
 app.factory('service1', function (service2, service3) {
-    // ...
+    service2 == 's2' // true
+    // service3 is previously registered dependency
 }, {
     service2: 's2'
 });
 ```
 
-In this example, `service2` passed to the factory method will be string `'s2'`,
-but `service3` will be previously registered injection named `'service3'`.
-
 ### injector.get(name)
 
-Construct (if it is not constructed yet) and return promise resolved to an
-instance of `name`, previously registered by `injector.instance()` or
-`injector.factory()`.
+Resolve previously registered dependency by `name` and return promise.
 
 For example:
 ```js
@@ -113,28 +132,26 @@ app.get('service1').then(function (s1) {
 
 ### injector.invoke(fn, [locals])
 
-Parse `fn` function declaration argument names and then resolve the names
-to instances, previously registered using `injector.instance()` or
-`injector.factory()`.
+Parse `fn` function declaration argument names, resolve previously registered
+dependencies by the names and invoke `fn` with the dependecies.
 
 Returns a promise which will be resolved to a return value of `fn`.
 
-Optional `locals` is a map of instances injected into `fn`.
+Optional `locals` is a override of dependencies injected into `fn`.
 
 For example:
 ```js
 app.invoke(function (service1, service2) {
-    // ...
-    return ret;
+    service2 == 's2' // true
+    // service1 is previously registered dependency
+    return 'hello';
 }, {
     service2: 's2'
 }).then(function (ret) {
-    // do something with ret
+    ret == 'hello' // true
 });
 ```
 
-In this example, `service2` passed to `fn` will be string `'s2'`, but `service3`
-will be previously registered injection named `'service3'`.
 
 ## Tests
 
