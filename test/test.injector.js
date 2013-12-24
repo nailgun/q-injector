@@ -20,7 +20,7 @@ describe('Injector', function () {
         });
     });
 
-    describe('.factory(name, factory)', function () {
+    describe('.factory(name, factory, [locals])', function () {
         it('should register `factory` as constructor for injection `name`', function () {
             var app = new Injector(),
                 s1 = {name: 'service1'};
@@ -117,23 +117,61 @@ describe('Injector', function () {
         });
     });
 
-    it('should use `invoke` for factory functions', function () {
+    describe('.get(name)', function () {
+        it('should return a promise', function () {
+            var app = new Injector(),
+                s1 = { name: 'service1' };
+            app.instance('service1', s1);
+
+            return app.get('service1').then(function (service1) {
+                service1.should.equal(s1);
+            });
+        });
+
+        it('should use `invoke` to resolve `name`', function () {
+            var app = new Injector(),
+                factory = function () {
+                    return {name: 'service1'};
+                },
+                loc = {},
+                used = false;
+
+            // mock
+            var invoke = app.invoke;
+            app.invoke = function (fn, locals) {
+                if (fn === factory) {
+                    locals.should.equal(loc);
+                    used = true;
+                }
+                return invoke.apply(app, arguments);
+            };
+
+            app.factory('service1', factory, loc);
+            return app.get('service1').then(function (service1) {
+                used.should.be.true;
+            });
+        });
+    });
+
+    it('should use `invoke` for factory methods', function () {
         var app = new Injector(),
             factory = function () {
                 return {name: 'service1'};
             },
+            loc = {},
             used = false;
 
         // mock
         var invoke = app.invoke;
-        app.invoke = function (fn) {
+        app.invoke = function (fn, locals) {
             if (fn === factory) {
+                locals.should.equal(loc);
                 used = true;
             }
             return invoke.apply(app, arguments);
         };
 
-        app.factory('service1', factory);
+        app.factory('service1', factory, loc);
         return app.invoke(function (service1) {
             used.should.be.true;
         });
