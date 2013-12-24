@@ -2,7 +2,7 @@
   "name": "q-injector",
   "version": "1.0.0",
   "description": "Lightweight asynchronous promise-based dependency injector",
-  "homepage": "https://github.com/nailgun/node-q-injector",
+  "homepage": "https://github.com/nailgun/q-injector",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/nailgun/ajector.git"
+    "url": "git://github.com/nailgun/q-injector.git"
   },
   "keywords": [
     "di",
