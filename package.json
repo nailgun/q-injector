@@ -1,0 +1,38 @@
+{
+  "name": "q-injector",
+  "version": "1.0.0",
+  "description": "Lightweight asynchronous promise-based dependency injector",
+  "homepage": "https://github.com/nailgun/node-q-injector",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha test --reporter spec --require should"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nailgun/ajector.git"
+  },
+  "keywords": [
+    "di",
+    "dependency",
+    "injector",
+    "injection",
+    "asynchronous",
+    "ioc",
+    "deferred",
+    "q",
+    "promise",
+    "then"
+  ],
+  "dependencies": {
+    "q": "~0.9.7"
+  },
+  "devDependencies": {
+    "should": "~2.1.1",
+    "mocha": "~1.16.2"
+  },
+  "author": "Dmitry Bashkatov <dbashkatov@gmail.com>",
+  "license": "MIT"
+}
