@@ -1,6 +1,6 @@
 {
   "name": "q-injector",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Lightweight asynchronous promise-based dependency injector",
   "homepage": "https://github.com/nailgun/q-injector",
   "main": "index.js",
