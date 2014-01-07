@@ -1,4 +1,10 @@
 {
     "node": true,
+    "browser": false,
+    "devel": false,
+    "trailing": true,
+    "maxlen": 100,
+    "maxdepth": 3,
+    "maxcomplexity": 2,
     "newcap": false
 }
