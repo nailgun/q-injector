@@ -1,7 +1,6 @@
 'use strict';
 
 var Injector = require('../index'),
-    should = require('should'),
     Q = require('q');
 
 describe('Injector', function () {
@@ -9,7 +8,7 @@ describe('Injector', function () {
         it('should register `obj` for injection under name `name`', function () {
             var app = new Injector(),
                 s1 = {name: 'service1'},
-                s2 = function (arg) {};
+                s2 = function () {};
 
             app.instance('service1', s1);
             app.instance('service2', s2);
@@ -68,6 +67,7 @@ describe('Injector', function () {
             app.instance('service1', {name: 'service1'});
 
             return app.invoke(function (service1) {
+                service1; // fixes lint warning
                 return {
                     name: 'hello'
                 };
@@ -105,7 +105,7 @@ describe('Injector', function () {
             });
         });
 
-        it('should drop surrounding _underscores_ from injection name', function (done) {
+        it('should drop surrounding _underscores_ from injection name', function () {
             var app = new Injector();
             app.instance('service1', {name: 'service1'});
             app.instance('service2', {name: 'service2'});
@@ -148,6 +148,7 @@ describe('Injector', function () {
 
             app.factory('service1', factory, loc);
             return app.get('service1').then(function (service1) {
+                service1; // fixes lint warning
                 used.should.be.true;
             });
         });
@@ -173,6 +174,7 @@ describe('Injector', function () {
 
         app.factory('service1', factory, loc);
         return app.invoke(function (service1) {
+            service1; // fixes lint warning
             used.should.be.true;
         });
     });
@@ -190,6 +192,7 @@ describe('Injector', function () {
             initialized.should.be.false;
 
             return app.invoke(function (service1) {
+                service1; // fixes lint warning
                 initialized.should.be.true;
             });
         });
@@ -201,19 +204,22 @@ describe('Injector', function () {
             initialized2 = false;
 
         app.factory('service1', function (service2) {
+            service2; // fixes lint warning
             initialized.should.be.false;
             initialized = true;
             return {};
         });
 
-        app.factory('service2', function (callback) {
+        app.factory('service2', function () {
             initialized2.should.be.false;
             initialized2 = true;
             return Q({}).delay(10);
         });
 
         return app.invoke(function (service1, service2) {
+            service1; service2; // fixes lint warning
             return app.invoke(function (service1, service2) {
+                service1; service2; // fixes lint warning
                 initialized.should.be.true;
                 initialized2.should.be.true;
             });
@@ -224,7 +230,7 @@ describe('Injector', function () {
         var app = new Injector(),
             initialized = false;
 
-        app.factory('service1', function (callback) {
+        app.factory('service1', function () {
             initialized.should.be.false;
             initialized = true;
             return Q({}).delay(10);
@@ -233,6 +239,7 @@ describe('Injector', function () {
         var promises = [];
         var fn = function () {
             return app.invoke(function (service1) {
+                service1; // fixes lint warning
                 initialized.should.be.true;
             });
         };
@@ -248,7 +255,7 @@ describe('Injector', function () {
             initialized = false,
             validOrder = false;
 
-        app.factory('service1', function (callback) {
+        app.factory('service1', function () {
             initialized.should.be.false;
             initialized = true;
             return Q({}).delay(10);
@@ -257,6 +264,7 @@ describe('Injector', function () {
         return Q.all([
         function () {
             return app.invoke(function (service1) {
+                service1; // fixes lint warning
                 validOrder.should.be.true;
             });
         },
