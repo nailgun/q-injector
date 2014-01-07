@@ -231,12 +231,13 @@ describe('Injector', function () {
         });
 
         var promises = [];
-        for (var i = 0; i < 3; i++) {
-            promises.push(function () {
-                return app.invoke(function (service1) {
-                    initialized.should.be.true;
-                });
+        var fn = function () {
+            return app.invoke(function (service1) {
+                initialized.should.be.true;
             });
+        };
+        for (var i = 0; i < 3; i++) {
+            promises.push(fn);
         }
 
         return Q.all(promises);

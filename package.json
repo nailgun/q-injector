@@ -8,7 +8,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha test --reporter spec --require should"
+    "test": "./node_modules/.bin/mocha test --reporter spec --require should",
+    "jshint": "./node_modules/.bin/jshint ."
   },
   "repository": {
     "type": "git",
@@ -33,7 +34,8 @@
   "devDependencies": {
     "mocha": "~1.16.2",
     "mocha-as-promised": "~2.0.0",
-    "should": "~2.1.1"
+    "should": "~2.1.1",
+    "jshint": "~2.4.1"
   },
   "author": "Dmitry Bashkatov <dbashkatov@gmail.com>",
   "license": "MIT"

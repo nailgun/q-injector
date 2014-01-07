@@ -1,0 +1,9 @@
+{
+    "node": true,
+    "newcap": false,
+    "-W030": true,
+    "globals": {
+        "describe": true,
+        "it": true
+    }
+}
